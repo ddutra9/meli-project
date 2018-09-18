@@ -47,7 +47,7 @@ public class PersonService {
         int horizontalMatch = 0, verticalMatch = 0, obliqueMatch = 0;
 
         for (int i = 0; i < n; i++) {
-            if(!dna[i].matches("[ACTG]+")){
+            if(!dna[i].matches("[ACTG]+") || n != dna[i].length()){
                 throw new ForbiddenException();
             }
 

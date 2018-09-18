@@ -2,7 +2,10 @@ package com.ddutra9.meliproject;
 
 import com.ddutra9.meliproject.exceptions.ForbiddenException;
 import com.ddutra9.meliproject.model.Person;
+import com.ddutra9.meliproject.repositories.PersonRepository;
 import com.ddutra9.meliproject.services.PersonService;
+import javafx.application.Application;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +22,16 @@ public class PersonServiceTests {
 	@Autowired
 	PersonService personService;
 
+	@Autowired
+	PersonRepository personRepository;
+
+	@After
+	public void After(){
+		personRepository.deleteAll();
+	}
+
 	@Test
-	public void createMutantAndHuman() {
+	public void createMutantTest() {
 		Person person = new Person();
 		person.setDna(new String[]{"ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"});
 
@@ -31,10 +42,19 @@ public class PersonServiceTests {
 		}
 
 		Map<String, Double> map = personService.getStats();
-		Assert.assertTrue(map.get("count_mutant_dna") > 0);
-		Assert.assertTrue(map.get("count_human_dna") == 0);
+		Assert.assertEquals(map.get("count_mutant_dna"),  Double.valueOf(1));
+		Assert.assertEquals(map.get("count_human_dna"), Double.valueOf(0));
+	}
 
-		person = new Person();
+	@Test
+	public void create2EqualMutantsTest() {
+		createMutantTest();
+		createMutantTest();
+	}
+
+	@Test
+	public void createHumantTest() {
+		Person person = new Person();
 		person.setDna(new String[]{"ATGCGA","AAGTCC","ATATAT","CGAAGG","CCCCTA","TCACTG"});
 
 		try {
@@ -44,8 +64,43 @@ public class PersonServiceTests {
 
 		}
 
-		map = personService.getStats();
-		Assert.assertTrue(map.get("count_human_dna") > 0);
+		Map<String, Double> map = personService.getStats();
+		Assert.assertEquals(map.get("count_human_dna"), Double.valueOf(1));
+		Assert.assertEquals(map.get("count_mutant_dna"), Double.valueOf(0));
+	}
+
+	@Test
+	public void createPersonWithUnknownCharTest() {
+		Person person = new Person();
+		person.setDna(new String[]{"ATGLGA","AAOTCC","ATAYAT","WGAAGG","CCCPTA","TCACBG"});
+
+		try {
+			personService.saveAndValidIsMutant(person);
+			Assert.fail();
+		} catch (ForbiddenException ex){
+
+		}
+
+		Map<String, Double> map = personService.getStats();
+		Assert.assertEquals(map.get("count_human_dna"), Double.valueOf(0));
+		Assert.assertEquals(map.get("count_mutant_dna"), Double.valueOf(0));
+	}
+
+	@Test
+	public void createMatrizNxYTest() {
+		Person person = new Person();
+		person.setDna(new String[]{"ATGCGA","AAGTCC","ATATAT","CGAAGG","CCCCTA","TCACTG","TCACTG"});
+
+		try {
+			personService.saveAndValidIsMutant(person);
+			Assert.fail();
+		} catch (ForbiddenException ex){
+
+		}
+
+		Map<String, Double> map = personService.getStats();
+		Assert.assertEquals(map.get("count_human_dna"), Double.valueOf(0));
+		Assert.assertEquals(map.get("count_mutant_dna"), Double.valueOf(0));
 	}
 
 }
