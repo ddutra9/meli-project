@@ -3,13 +3,13 @@ package com.ddutra9.meliproject.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
-public class ForbiddenException extends RuntimeException {
-    public ForbiddenException() {
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class BadRequestException extends RuntimeException {
+    public BadRequestException() {
         super();
     }
 
-    public ForbiddenException(String message) {
+    public BadRequestException(String message) {
         super(message);
     }
 }

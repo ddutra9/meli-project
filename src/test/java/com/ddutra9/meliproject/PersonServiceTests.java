@@ -1,5 +1,6 @@
 package com.ddutra9.meliproject;
 
+import com.ddutra9.meliproject.exceptions.BadRequestException;
 import com.ddutra9.meliproject.exceptions.ForbiddenException;
 import com.ddutra9.meliproject.model.Person;
 import com.ddutra9.meliproject.repositories.PersonRepository;
@@ -61,7 +62,7 @@ public class PersonServiceTests {
 			personService.saveAndValidIsMutant(person);
 			Assert.fail();
 		} catch (ForbiddenException ex){
-
+			Assert.assertEquals("Humano!", ex.getMessage());
 		}
 
 		Map<String, Double> map = personService.getStats();
@@ -77,8 +78,8 @@ public class PersonServiceTests {
 		try {
 			personService.saveAndValidIsMutant(person);
 			Assert.fail();
-		} catch (ForbiddenException ex){
-
+		} catch (BadRequestException ex){
+			Assert.assertEquals("Caracter invalido!", ex.getMessage());
 		}
 
 		Map<String, Double> map = personService.getStats();
@@ -94,8 +95,8 @@ public class PersonServiceTests {
 		try {
 			personService.saveAndValidIsMutant(person);
 			Assert.fail();
-		} catch (ForbiddenException ex){
-
+		} catch (BadRequestException ex){
+			Assert.assertEquals("Matriz deve ser NxN!", ex.getMessage());
 		}
 
 		Map<String, Double> map = personService.getStats();

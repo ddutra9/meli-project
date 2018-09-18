@@ -1,5 +1,6 @@
 package com.ddutra9.meliproject.services;
 
+import com.ddutra9.meliproject.exceptions.BadRequestException;
 import com.ddutra9.meliproject.exceptions.ForbiddenException;
 import com.ddutra9.meliproject.model.Person;
 import com.ddutra9.meliproject.repositories.PersonRepository;
@@ -25,7 +26,7 @@ public class PersonService {
         }
 
         if(!person.isMutant()){
-            throw new ForbiddenException();
+            throw new ForbiddenException("Humano!");
         }
 
         return person;
@@ -47,8 +48,12 @@ public class PersonService {
         int horizontalMatch = 0, verticalMatch = 0, obliqueMatch = 0;
 
         for (int i = 0; i < n; i++) {
-            if(!dna[i].matches("[ACTG]+") || n != dna[i].length()){
-                throw new ForbiddenException();
+            if(!dna[i].matches("[ACTG]+")){
+                throw new BadRequestException("Caracter invalido!");
+            }
+
+            if(n != dna[i].length()){
+                throw new BadRequestException("Matriz deve ser NxN!");
             }
 
             for (int j = 0; j < n; j++) {
